@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .balance {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .crypto {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .btc {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .price {
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 48%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .buy {
+      background: #16a34a;
+      color: white;
+    }
+
+    .sell {
+      background: #dc2626;
+      color: white;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .demo {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>₿ Crypto Demo</h1>
+  <p>Application de démonstration</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <div>Solde fictif</div>
+    <div class="balance" id="balance">1 000,00 $</div>
+    <div class="demo">Aucun argent réel</div>
+  </div>
+
+  <div class="card">
+    <div class="crypto">
+      <div>
+        <div class="btc">₿ Bitcoin</div>
+        <div>BTC</div>
+      </div>
+      <div class="price">65 000 $</div>
+    </div>
+
+    <label>Montant en dollars</label>
+    <input
+      type="number"
+      id="amount"
+      placeholder="Exemple : 100"
+      min="1"
+    >
+
+    <div style="display:flex; justify-content:space-between;">
+      <button class="buy" onclick="buyCrypto()">Acheter</button>
+      <button class="sell" onclick="sellCrypto()">Vendre</button>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+  <div class="card">
+    <h2>Mon portefeuille</h2>
+    <p>Bitcoin : <strong id="btcBalance">0 BTC</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>Historique</h2>
+    <div id="history">
+      <p>Aucune transaction pour le moment.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let balance = 1000;
+  let btc = 0;
+
+  const btcPrice = 65000;
+
+  function updateScreen() {
+    document.getElementById("balance").textContent =
+      balance.toFixed(2) + " $";
+
+    document.getElementById("btcBalance").textContent =
+      btc.toFixed(6) + " BTC";
+  }
+
+  function buyCrypto() {
+    const amount = Number(document.getElementById("amount").value);
+
+    if (amount <= 0 || isNaN(amount)) {
+      showMessage("Entre un montant valide.");
+      return;
+    }
+
+    if (amount > balance) {
+      showMessage("Solde fictif insuffisant.");
+      return;
+    }
+
+    const btcBought = amount / btcPrice;
+
+    balance -= amount;
+    btc += btcBought;
+
+    addHistory("Achat", amount, btcBought);
+    updateScreen();
+
+    showMessage("Achat simulé avec succès.");
+  }
+
+  function sellCrypto() {
+    const amount = Number(document.getElementById("amount").value);
+
+    if (amount <= 0 || isNaN(amount)) {
+      showMessage("Entre un montant valide.");
+      return;
+    }
+
+    const btcSold = amount / btcPrice;
+
+    if (btcSold > btc) {
+      showMessage("Tu n'as pas assez de BTC fictifs.");
+      return;
+    }
+
+    btc -= btcSold;
+    balance += amount;
+
+    addHistory("Vente", amount, btcSold);
+    updateScreen();
+
+    showMessage("Vente simulée avec succès.");
+  }
+
+  function addHistory(type, dollars, bitcoin) {
+    const history = document.getElementById("history");
+
+    if (history.innerHTML.includes("Aucune transaction")) {
+      history.innerHTML = "";
+    }
+
+    const item = document.createElement("p");
+
+    item.textContent =
+      type + " : " +
+      dollars.toFixed(2) +
+      " $ (" +
+      bitcoin.toFixed(6) +
+      " BTC)";
+
+    history.prepend(item);
+  }
+
+  function showMessage(text) {
+    document.getElementById("message").textContent = text;
+  }
+
+  updateScreen();
+</script>
+
+</body>
+</html>
